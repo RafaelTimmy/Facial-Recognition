@@ -31,7 +31,19 @@ def findEncodings(images):
     return encodeList
 
 def markAttendance(name):
-
+    with open("attendance.csv", 'r+') as f:
+        myDataList = f.readlines()
+        nameList = []
+        for line in myDataList:
+            entry = line.split(',')
+            nameList.append(entry[0])
+        if name not in nameList:
+            now = datetime.now()
+            dateString = now.strftime("%H:%M:%S")
+            f.writelines(f"\n{name},{dateString}")
+            print(f"ATTENDANCE RECORDED: \n\n{name} -  {dateString}\n")
+        else:
+            print(f"\n{name} --> Already Registered for today!\n")
 
 encodeListKnown = findEncodings(images)
 print("----Encoding Complete----")
@@ -62,6 +74,7 @@ while True:
             cv2.rectangle(img,(x1,y1), (x2,y2), (0,255,0),2)
             cv2.rectangle(img,(x1,y2-35), (x2,y2), (0,255,0), cv2.FILLED)
             cv2.putText(img,name,(x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1, (255,255,255), 2)
+            markAttendance(name)
 
     cv2.imshow("Webcam", img)
     cv2.waitKey(1)
@@ -69,13 +82,3 @@ while True:
 
 
 
-# faceLoc = face_recognition.face_locations(imgAg)[0]
-# encodeAg = face_recognition.face_encodings(imgAg)[0]
-# cv2.rectangle(imgAg,(faceLoc[3],faceLoc[0]), (faceLoc[1],faceLoc[2]), (255,0,255), 2)
-#
-# faceLocTest = face_recognition.face_locations(imgAgTest)[0]
-# encodeAgTest = face_recognition.face_encodings(imgAgTest)[0]
-# cv2.rectangle(imgAgTest,(faceLocTest[3],faceLocTest[0]), (faceLocTest[1],faceLocTest[2]), (255,0,255), 2)
-#
-# results = face_recognition.compare_faces([encodeAg], encodeAgTest)
-# faceDis = face_recognition.face_distance([encodeAg], encodeAgTest)
